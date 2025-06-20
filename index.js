@@ -26,10 +26,10 @@ app.get("/products", (req, res) => {
 });
 
 app.get("/products/search", (req, res) => {
-  const { nombre } = req.query;
+  const { name } = req.query;
 
   const filteredProducts = products.filter((p) =>
-    p.nombre.toLowerCase().includes(nombre.toLowerCase())
+    p.name.toLowerCase().includes(name.toLowerCase())
   );
 
   res.json(filteredProducts);
