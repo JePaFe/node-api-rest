@@ -1,7 +1,7 @@
 {
-  "name": "api-rest",
+  "name": "clase-11",
   "version": "1.0.0",
-  "description": "Api Rest en Node.js",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,6 +12,7 @@
   "license": "MIT",
   "type": "module",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "devDependencies": {
