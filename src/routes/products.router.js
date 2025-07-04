@@ -14,25 +14,15 @@ import {
   getAllProducts,
   searchProduct,
   getProductById,
+  createProduct,
+  deleteProduct,
 } from "../controllers/products.controller.js";
 
 router.get("/products", getAllProducts);
 router.get("/products/search", searchProduct);
 router.get("/products/:id", getProductById);
 
-router.post("/products", (req, res) => {
-  const { name, price } = req.body;
-
-  const newProduct = {
-    id: products.length + 1,
-    name,
-    price,
-  };
-
-  products.push(newProduct);
-
-  res.status(201).json(newProduct);
-});
+router.post("/products", createProduct);
 
 router.put("/products/:id", (req, res) => {
   const productId = parseInt(req.params.id, 10);
@@ -48,17 +38,6 @@ router.put("/products/:id", (req, res) => {
   res.json(products[productIndex]);
 });
 
-router.delete("/products/:id", (req, res) => {
-  const productId = parseInt(req.params.id, 10);
-  const productIndex = products.findIndex((p) => p.id === productId);
-
-  if (productIndex === -1) {
-    return res.status(404).json({ error: "Producto no encontrado" });
-  }
-
-  products.splice(productIndex, 1);
-
-  res.status(204).send();
-});
+router.delete("/products/:id", deleteProduct);
 
 export default router;
