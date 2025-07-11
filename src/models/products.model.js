@@ -9,39 +9,76 @@ const products = JSON.parse(json);
 
 // console.log(products);
 
-export const getAllProducts = () => {
-  return products;
+import { db } from "./data.js";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  addDoc,
+  deleteDoc,
+  setDoc,
+} from "firebase/firestore";
+
+const productsCollection = collection(db, "products");
+
+export const getAllProducts = async () => {
+  try {
+    const snapshot = await getDocs(productsCollection);
+    return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const getProductById = (id) => {
-  return products.find((item) => item.id == id);
+export const getProductById = async (id) => {
+  try {
+    const productRef = doc(productsCollection, id);
+    const snapshot = await getDoc(productRef);
+    return snapshot.exists() ? { id: snapshot.id, ...snapshot.data() } : null;
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const createProduct = (data) => {
-  //   console.log({ ...data });
-
-  const newProduct = {
-    id: products.length + 1,
-    ...data,
-  };
-
-  products.push(newProduct);
-
-  fs.writeFileSync(jsonPath, JSON.stringify(products));
-
-  return newProduct;
+export const createProduct = async (data) => {
+  try {
+    const docRef = await addDoc(productsCollection, data);
+    return { id: docRef.id, ...data };
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-export const deleteProduct = (id) => {
-  const productIndex = products.findIndex((p) => p.id === id);
+// PUT
+export async function updateProduct(id, productData) {
+  try {
+    const productRef = doc(productsCollection, id);
+    const snapshot = await getDoc(productRef);
 
-  if (productIndex == -1) {
-    return null;
-  } else {
-    const product = products.splice(productIndex, 1);
+    if (!snapshot.exists()) {
+      return false;
+    }
 
-    fs.writeFileSync(jsonPath, JSON.stringify(products));
+    await setDoc(productRef, productData); // reemplazo completo
+    return { id, ...productData };
+  } catch (error) {
+    console.error(error);
+  }
+}
 
-    return product;
+export const deleteProduct = async (id) => {
+  try {
+    const productRef = doc(productsCollection, id);
+    const snapshot = await getDoc(productRef);
+
+    if (!snapshot.exists()) {
+      return false;
+    }
+
+    await deleteDoc(productRef);
+    return true;
+  } catch (error) {
+    console.error(error);
   }
 };

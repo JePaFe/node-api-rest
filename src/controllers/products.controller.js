@@ -1,7 +1,9 @@
 import * as model from "../models/products.model.js";
 
-export const getAllProducts = (req, res) => {
-  res.json(model.getAllProducts());
+export const getAllProducts = async (req, res) => {
+  const products = await model.getAllProducts();
+  // console.log(products);
+  res.json(products);
 };
 
 export const searchProduct = (req, res) => {
@@ -16,10 +18,10 @@ export const searchProduct = (req, res) => {
   res.json(filteredProducts);
 };
 
-export const getProductById = (req, res) => {
+export const getProductById = async (req, res) => {
   const { id } = req.params;
 
-  const product = model.getProductById(id);
+  const product = await model.getProductById(id);
 
   if (!product) {
     res.status(404).json({ error: "No existe el producto" });
@@ -28,18 +30,21 @@ export const getProductById = (req, res) => {
   res.json(product);
 };
 
-export const createProduct = (req, res) => {
-  const { name, price } = req.body;
+export const createProduct = async (req, res) => {
+  const { name, price, categories } = req.body;
 
-  const newProduct = model.createProduct({ name, price });
+  const newProduct = await model.createProduct({ name, price, categories });
 
   res.status(201).json(newProduct);
 };
 
-export const deleteProduct = (req, res) => {
-  const productId = parseInt(req.params.id, 10);
 
-  const product = model.deleteProduct(productId);
+
+export const deleteProduct = async (req, res) => {
+  const productId = req.params.id;
+  console.log(productId);
+
+  const product = await model.deleteProduct(productId);
 
   if (!product) {
     return res.status(404).json({ error: "Producto no encontrado" });
